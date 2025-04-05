@@ -1,26 +1,39 @@
 import { Text, View, StyleSheet, Image, ScrollView } from 'react-native'
-import { useLayoutEffect } from 'react';
+import { useContext, useLayoutEffect } from 'react';
 import { MEALS } from '../data/dummydata'
 import MealDetails from '../components/MealDetails';
 import SubTitle from '../components/SubTitle';
 import List from '../components/List';
 import IconButton from '../components/IconButton';
+import { FavoritesContext } from '../store/context/favorites-context'
 function MealDetailsScreen({ route, navigation }) {
+    const favoriteMealsCtx = useContext(FavoritesContext)
     const mealId = route.params.mealId;
     const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+    const mealIsFavorite = favoriteMealsCtx.ids.includes(mealId);
     //console.log(selectedMeal);
-    function headerButtonPressedHandler() {
-        console.log('pressed');
+    function changeFavoriteStatusHandler() {
+        if (mealIsFavorite) {
+            favoriteMealsCtx.removeFavorite(mealId);
+            console.log(favoriteMealsCtx.ids);
+        }
+        else {
+            favoriteMealsCtx.addFavorite(mealId);
+            console.log(favoriteMealsCtx.ids);
+        }
     }
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => {
                 return (
-                    <IconButton icon="star" color="white" onPress={headerButtonPressedHandler} />
+                    <IconButton
+                        onPress={changeFavoriteStatusHandler}
+                        icon={mealIsFavorite ? 'star' : 'star-outline'}
+                        color="white" />
                 )
             }
         });
-    }, [navigation, headerButtonPressedHandler])
+    }, [navigation, changeFavoriteStatusHandler])
     return (
         <ScrollView style={styles.rootContainer}>
             <Image style={styles.image} source={{ uri: selectedMeal.imageUrl }} />
@@ -79,6 +92,9 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     outerContainer: {
-        alignItems: 'center'
+        alignItems: 'center',
+        //marginBottom: 20,
+        padding: 10,
+        margin: 15
     }
 })

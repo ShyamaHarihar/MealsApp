@@ -9,6 +9,9 @@ import MealsOverViewScreen from './screens/MealsOverViewScreen';
 import MealDetailsScreen from './screens/MealDetailsScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons'
+import IconButton from './components/IconButton';
+import FavoritesContextProvider from './store/context/favorites-context';
 //import './gesture-handler';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,52 +27,69 @@ function DrawerNavigator() {
       drawerActiveBackgroundColor: "#e4baa1",
       headerTintColor: 'white',
     }}>
-    <Drawer.Screen name="Categories" component={CategoriesScreen} />
-    <Drawer.Screen name="Favorites" component={FavoritesScreen} />
+    <Drawer.Screen
+      name="Categories"
+      options={{
+        drawerIcon: ({ color, size }) => (
+          <Ionicons name="list" color="white" size={25} />
+        ),
+      }}
+      component={CategoriesScreen} />
+    <Drawer.Screen
+      name="Favorites"
+      options={{
+        drawerIcon: ({ color, size }) => (
+          <Ionicons name="heart" color="white" size={25} />
+        )
+      }}
+      component={FavoritesScreen} />
   </Drawer.Navigator>)
 }
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <StatusBar style='light' />
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: "#351401",
-            },
-            headerTintColor: "white",
-            contentStyle: { backgroundColor: "#3f2f25" },
-          }}
-        >
-          <Stack.Screen
-            name="Drawer"
-            component={DrawerNavigator}
-            options={{ headerShown: false }}
-          //first screen that should come is drawer
-          //options={{ title: 'All Categories' }} 
-          />
-          <Stack.Screen
-            name="MealsOverview"
-            component={MealsOverViewScreen}
-          // options={({ route, navigation }) => {
-          //   const catId = route.params.categoryId;
-          //   return {
-          //     title: catId,
-          //   }
-          // }}
-          />
-          <Stack.Screen
-            name="MealDetails"
-            component={MealDetailsScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <FavoritesContextProvider>
+        <NavigationContainer>
+          <StatusBar style='light' />
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: "#351401",
+              },
+              headerTintColor: "white",
+              contentStyle: { backgroundColor: "#3f2f25" },
+            }}
+          >
+            <Stack.Screen
+              name="Drawer"
+              component={DrawerNavigator}
+              options={{ headerShown: false }}
+            //first screen that should come is drawer
+            //options={{ title: 'All Categories' }} 
+            />
+            <Stack.Screen
+              name="MealsOverview"
+              component={MealsOverViewScreen}
+            // options={({ route, navigation }) => {
+            //   const catId = route.params.categoryId;
+            //   return {
+            //     title: catId,
+            //   }
+            // }}
+            />
+            <Stack.Screen
+              name="MealDetails"
+              component={MealDetailsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </FavoritesContextProvider>
     </GestureHandlerRootView>
   );
 }
-
+//npx expo start -- --clear
 const styles = StyleSheet.create({
   container: {
     marginTop: 20
   },
 });
+//push splice includes filter indexOf
